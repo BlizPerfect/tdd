@@ -7,22 +7,14 @@ using System.Threading.Tasks;
 
 namespace TagsCloudVisualization
 {
-    internal class CircularCloudLayouterWorker
+    internal static class CircularCloudLayouterWorker
     {
-        private Size _minRectangleSize;
-        private Size _maxRectangleSize;
-        private Random _random = new Random();
+        private static Random _random = new Random();
 
-        public CircularCloudLayouterWorker(Size minRectangleSize, Size maxRectangleSize)
+        public static Size GetNextRectangleSize(Size minRectangleSize, Size maxRectangleSize)
         {
-            _minRectangleSize = minRectangleSize;
-            _maxRectangleSize = maxRectangleSize;
-        }
-
-        public Size GetNextRectangleSize()
-        {
-            var width = _random.Next(_minRectangleSize.Width, _maxRectangleSize.Width);
-            var height = _random.Next(_minRectangleSize.Height, _maxRectangleSize.Height);
+            var width = _random.Next(minRectangleSize.Width, maxRectangleSize.Width);
+            var height = _random.Next(minRectangleSize.Height, maxRectangleSize.Height);
             return new Size(width, height);
         }
     }
