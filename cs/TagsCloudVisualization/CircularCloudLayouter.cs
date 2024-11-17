@@ -9,8 +9,7 @@ namespace TagsCloudVisualization
 {
     internal class CircularCloudLayouter(Point center) : ICircularCloudLayouter
     {
-        public readonly Point Center = center;
-        private float _radius = 2.0f;
+        private Circle _arrangementСircle = new Circle(center);
         private Random _random = new Random();
         private readonly List<Rectangle> _rectangles = new List<Rectangle>();
 
@@ -22,34 +21,17 @@ namespace TagsCloudVisualization
             }
 
             var result = new Rectangle();
-            _radius -= 1.0f;
+            _arrangementСircle.Radius -= 1.0f;
+
             var isPlaced = false;
             while (!isPlaced)
             {
-                var points = GetCoordinatesOnEllipse(Center, _radius);
-                var pointsStartIndex = _random.Next(points.Length);
-
-                for (int j = 0; j < points.Length; j++)
+                var startAngle = _random.Next(360);
+                foreach (var coordinate in _arrangementСircle.GetCoordinatesOnCircle(startAngle))
                 {
-                    var index = (pointsStartIndex + j) % points.Length;
-
-                    int x = points[index].X - rectangleSize.Width / 2;
-                    int y = points[index].Y - rectangleSize.Height / 2;
-                    var location = new Point(x, y);
-
+                    var location = GetRectangleLocation(coordinate, rectangleSize);
                     var nextRectangle = new Rectangle(location, rectangleSize);
-
-                    var isIntersects = false;
-                    foreach (var rect in _rectangles)
-                    {
-                        if (rect.IntersectsWith(nextRectangle))
-                        {
-                            isIntersects = true;
-                            break;
-                        }
-                    }
-
-                    if (!isIntersects)
+                    if (!IsIntersectionWithAlreadyPlaced(nextRectangle))
                     {
                         _rectangles.Add(nextRectangle);
                         isPlaced = true;
@@ -57,26 +39,28 @@ namespace TagsCloudVisualization
                         break;
                     }
                 }
-                _radius += 1.0f;
+                _arrangementСircle.Radius += 1.0f;
             }
             return result;
         }
 
-        private Point[] GetCoordinatesOnEllipse(Point rectangleCenter, float radius)
+        private bool IsIntersectionWithAlreadyPlaced(Rectangle rectangle)
         {
-            var result = new Point[360];
-            var step = 1;
-
-            for (int angle = 0; angle < 360; angle += step)
+            foreach (var rect in _rectangles)
             {
-                double angleInRadians = angle * Math.PI / 180;
-
-                var x = (int)(rectangleCenter.X + radius * Math.Cos(angleInRadians));
-                var y = (int)(rectangleCenter.Y + radius * Math.Sin(angleInRadians));
-
-                result[angle] = new Point(x, y);
+                if (rect.IntersectsWith(rectangle))
+                {
+                    return true;
+                }
             }
-            return result;
+            return false;
+        }
+
+        private Point GetRectangleLocation(Point pointOnCircle, Size rectangleSize)
+        {
+            var x = pointOnCircle.X - rectangleSize.Width / 2;
+            var y = pointOnCircle.Y - rectangleSize.Height / 2;
+            return new Point(x, y);
         }
     }
 }
