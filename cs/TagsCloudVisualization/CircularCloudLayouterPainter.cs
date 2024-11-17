@@ -9,6 +9,8 @@ namespace TagsCloudVisualization
 {
     internal static class CircularCloudLayouterPainter
     {
+        private static int _defaultPadding = 10;
+
         public static Bitmap Draw(IList<Rectangle> rectangles, int? paddingPerSide = null)
         {
             if (rectangles.Count == 0)
@@ -16,7 +18,7 @@ namespace TagsCloudVisualization
                 throw new ArgumentException("Список прямоугольников пуст.");
             }
 
-            var correctPaddingPerSide = paddingPerSide ?? 10;
+            var correctPaddingPerSide = paddingPerSide ?? _defaultPadding;
 
             var minimums = new Point(rectangles.Min(r => r.Left), rectangles.Min(r => r.Top));
             var maximums = new Point(rectangles.Max(r => r.Right), rectangles.Max(r => r.Bottom));
@@ -27,7 +29,7 @@ namespace TagsCloudVisualization
             using var graphics = Graphics.FromImage(result);
             graphics.Clear(Color.White);
             using var pen = new Pen(Color.Black, 1);
-            for (int i = 0; i < rectangles.Count; i++)
+            for (var i = 0; i < rectangles.Count; i++)
             {
                 var positionOnCanvas = GetPositionOnCanvas(
                     rectangles[i],

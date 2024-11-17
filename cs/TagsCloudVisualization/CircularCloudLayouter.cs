@@ -39,8 +39,10 @@ namespace TagsCloudVisualization
                         break;
                     }
                 }
+
                 _arrangementСircle.Radius += 1.0f;
             }
+
             return result;
         }
 
@@ -53,6 +55,7 @@ namespace TagsCloudVisualization
                     return true;
                 }
             }
+
             return false;
         }
 

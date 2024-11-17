@@ -18,21 +18,22 @@ namespace TagsCloudVisualization
             int maxRectangleHeight)
         {
             if (!IsMinAndMaxValuesPositive(
-                minRectangleWidth,
-                maxRectangleWidth,
-                minRectangleHeight,
-                maxRectangleHeight))
+                    minRectangleWidth,
+                    maxRectangleWidth,
+                    minRectangleHeight,
+                    maxRectangleHeight))
             {
-                throw new ArgumentException("Ширина и высота прямоугольника не может быть отрицательной либо нулём");
+                throw new ArgumentException("Ширина или высота прямоугольника должна быть положительной");
             }
 
             if (!IsMinAndMaxValuesCorrect(
-                minRectangleWidth,
-                maxRectangleWidth,
-                minRectangleHeight,
-                maxRectangleHeight))
+                    minRectangleWidth,
+                    maxRectangleWidth,
+                    minRectangleHeight,
+                    maxRectangleHeight))
             {
-                throw new ArgumentException("Минимальное значение ширины или высоты не может быть больше максимального");
+                throw new ArgumentException(
+                    "Минимальное значение ширины или высоты не может быть больше максимального");
             }
 
             var width = _random.Next(minRectangleWidth, maxRectangleWidth);
@@ -52,7 +53,6 @@ namespace TagsCloudVisualization
             int maxRectangleWidth,
             int minRectangleHeight,
             int maxRectangleHeight)
-            => minRectangleWidth > 0 && maxRectangleWidth > 0
-            && minRectangleHeight > 0 && maxRectangleHeight > 0;
+            => minRectangleWidth > 0 && maxRectangleWidth > 0 && minRectangleHeight > 0 && maxRectangleHeight > 0;
     }
 }

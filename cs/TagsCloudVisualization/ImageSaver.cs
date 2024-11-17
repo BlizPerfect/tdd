@@ -9,7 +9,7 @@ namespace TagsCloudVisualization
 {
     internal static class ImageSaver
     {
-        public static void SaveOnFile(Bitmap image, string fileName)
+        public static void SaveFile(Bitmap image, string fileName)
         {
             if (image is null)
             {
@@ -18,7 +18,7 @@ namespace TagsCloudVisualization
 
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                throw new ArgumentException("Некорректное имя файла для созранения");
+                throw new ArgumentException("Некорректное имя файла для создания");
             }
 
             image.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
