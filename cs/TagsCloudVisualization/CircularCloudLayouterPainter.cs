@@ -15,7 +15,7 @@ namespace TagsCloudVisualization
             _fileName = fileName;
         }
 
-        public void Save(List<Rectangle> rectangles, int? paddingPerSide = null)
+        public void Save(IList<Rectangle> rectangles, int? paddingPerSide = null)
         {
             if (rectangles.Count == 0)
             {
