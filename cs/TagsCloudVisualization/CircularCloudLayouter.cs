@@ -7,22 +7,12 @@ using System.Threading.Tasks;
 
 namespace TagsCloudVisualization
 {
-    internal class CircularCloudLayouter
+    internal class CircularCloudLayouter(Point center) : ICircularCloudLayouter
     {
-        public readonly Point Center;
+        public readonly Point Center = center;
         private float _radius = 2.0f;
         private Random _random = new Random();
         private readonly List<Rectangle> _rectangles = new List<Rectangle>();
-        public IReadOnlyList<Rectangle> Rectangles => _rectangles.AsReadOnly();
-
-        public CircularCloudLayouter(Point center)
-        {
-            if (center.X < 0 || center.Y < 0)
-            {
-                throw new ArgumentException("Координаты центра не могут быть меньше нуля.");
-            }
-            Center = center;
-        }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
