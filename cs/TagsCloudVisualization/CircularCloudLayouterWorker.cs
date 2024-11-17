@@ -11,11 +11,48 @@ namespace TagsCloudVisualization
     {
         private static Random _random = new Random();
 
-        public static Size GetNextRectangleSize(Size minRectangleSize, Size maxRectangleSize)
+        public static Size GetNextRectangleSize(
+            int minRectangleWidth,
+            int maxRectangleWidth,
+            int minRectangleHeight,
+            int maxRectangleHeight)
         {
-            var width = _random.Next(minRectangleSize.Width, maxRectangleSize.Width);
-            var height = _random.Next(minRectangleSize.Height, maxRectangleSize.Height);
+            if (!IsMinAndMaxValuesPositive(
+                minRectangleWidth,
+                maxRectangleWidth,
+                minRectangleHeight,
+                maxRectangleHeight))
+            {
+                throw new ArgumentException("Ширина и высота прямоугольника не может быть отрицательной либо нулём");
+            }
+
+            if (!IsMinAndMaxValuesCorrect(
+                minRectangleWidth,
+                maxRectangleWidth,
+                minRectangleHeight,
+                maxRectangleHeight))
+            {
+                throw new ArgumentException("Минимальное значение ширины или высоты не может быть больше максимального");
+            }
+
+            var width = _random.Next(minRectangleWidth, maxRectangleWidth);
+            var height = _random.Next(minRectangleHeight, maxRectangleHeight);
             return new Size(width, height);
         }
+
+        private static bool IsMinAndMaxValuesCorrect(
+            int minRectangleWidth,
+            int maxRectangleWidth,
+            int minRectangleHeight,
+            int maxRectangleHeight)
+            => minRectangleWidth <= maxRectangleWidth && minRectangleHeight <= maxRectangleHeight;
+
+        private static bool IsMinAndMaxValuesPositive(
+            int minRectangleWidth,
+            int maxRectangleWidth,
+            int minRectangleHeight,
+            int maxRectangleHeight)
+            => minRectangleWidth > 0 && maxRectangleWidth > 0
+            && minRectangleHeight > 0 && maxRectangleHeight > 0;
     }
 }
