@@ -11,7 +11,7 @@ namespace TagsCloudVisualization
             int startAngle,
             int step = 1)
         {
-            for (int dAngle = 0; dAngle < 360; dAngle += step)
+            for (var dAngle = 0; dAngle < 360; dAngle += step)
             {
                 var angle = (startAngle + dAngle) % 360;
 

@@ -28,7 +28,7 @@ namespace TagsCloudVisualization.Tests
 
             _rectangles = new Rectangle[rectanglesCount];
             var circularCloudLayouter = new CircularCloudLayouter(_center);
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
             {
                 var nextRectangleSize = CircularCloudLayouterWorker.GetNextRectangleSize(
                     minRectangleWidth,
@@ -125,9 +125,9 @@ namespace TagsCloudVisualization.Tests
             {
                 var xInterval = GetGridIndexesInterval(rect.X, rect.Width, maxRadius, step);
                 var yInterval = GetGridIndexesInterval(rect.Y, rect.Height, maxRadius, step);
-                for (int x = xInterval.start; x <= xInterval.end; x++)
+                for (var x = xInterval.start; x <= xInterval.end; x++)
                 {
-                    for (int y = yInterval.start; y <= yInterval.end; y++)
+                    for (var y = yInterval.start; y <= yInterval.end; y++)
                     {
                         result[x, y] = true;
                     }
@@ -140,9 +140,9 @@ namespace TagsCloudVisualization.Tests
         {
             var totalCellsInsideCircle = 0;
             var coveredCellsInsideCircle = 0;
-            for (int x = 0; x < occupancyGrid.GetLength(0); x++)
+            for (var x = 0; x < occupancyGrid.GetLength(0); x++)
             {
-                for (int y = 0; y < occupancyGrid.GetLength(0); y++)
+                for (var y = 0; y < occupancyGrid.GetLength(0); y++)
                 {
                     var cellCenterX = x * step - maxRadius + _center.X;
                     var cellCenterY = y * step - maxRadius + _center.Y;

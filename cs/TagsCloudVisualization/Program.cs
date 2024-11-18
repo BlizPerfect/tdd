@@ -19,7 +19,7 @@ namespace TagsCloudVisualization
             var rectangles = new Rectangle[rectanglesCount];
             var circularCloudLayouter = new CircularCloudLayouter(center);
 
-            for (int i = 0; i < rectanglesCount; i++)
+            for (var i = 0; i < rectanglesCount; i++)
             {
                 var nextRectangleSize = CircularCloudLayouterWorker.GetNextRectangleSize(
                     minRectangleWidth,
