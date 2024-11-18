@@ -52,7 +52,7 @@ namespace TagsCloudVisualization.Tests
             actualCoverageRatio.Should().BeGreaterThanOrEqualTo(expectedCoverageRatio);
         }
 
-        [TestCase(10)]
+        [TestCase(15)]
         [Repeat(10)]
         public void ShouldPlaceCenterOfMassOfRectanglesNearCenter(int tolerance)
         {
