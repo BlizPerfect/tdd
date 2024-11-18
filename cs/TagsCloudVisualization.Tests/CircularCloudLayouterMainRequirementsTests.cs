@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -44,20 +45,22 @@ namespace TagsCloudVisualization.Tests
             }
         }
 
-        [TestCase(1.1, ExpectedResult = true)]
+        [TestCase(0.7, 1000)]
         [Repeat(10)]
-        public bool ShouldPlaceRectanglesInCircle(double goodAspectRatio)
+        public void ShouldPlaceRectanglesInCircle(double expectedCoverageRatio, int gridSize)
         {
-            var boundingBoxSize = GetBoundingBoxSize();
-            var actualAspectRatio =
-                (double)Math.Max(boundingBoxSize.Width, boundingBoxSize.Height)
-                / Math.Min(boundingBoxSize.Width, boundingBoxSize.Height);
-            return actualAspectRatio <= goodAspectRatio;
+            var maxRadius = _rectangles.Max(r => r.GetMaxDistanceFromPointToRectangleAngles(_center));
+            var step = (2 * maxRadius) / gridSize;
+
+            var occupancyGrid = GetOccupancyGrid(gridSize, maxRadius, step);
+
+            var actualCoverageRatio = GetOccupancyGridRatio(occupancyGrid, maxRadius, step);
+            actualCoverageRatio.Should().BeGreaterThanOrEqualTo(expectedCoverageRatio);
         }
 
-        [TestCase(0.1, ExpectedResult = true)]
+        [TestCase(10)]
         [Repeat(10)]
-        public bool ShouldPlaceRectanglesNearCenter(double percentFromBoundingBoxMaxSize)
+        public void ShouldPlaceCenterOfMassOfRectanglesNearCenter(int tolerance)
         {
             var centerX = _rectangles.Average(r => r.Left + r.Width / 2.0);
             var centerY = _rectangles.Average(r => r.Top + r.Height / 2.0);
@@ -66,12 +69,7 @@ namespace TagsCloudVisualization.Tests
             var distance = Math.Sqrt(Math.Pow(actualCenter.X - _center.X, 2)
                                      + Math.Pow(actualCenter.Y - _center.Y, 2));
 
-            var boundingBoxSize = GetBoundingBoxSize();
-
-            var maxAllowedDistance = Math.Max(boundingBoxSize.Width, boundingBoxSize.Height)
-                                     * percentFromBoundingBoxMaxSize;
-
-            return maxAllowedDistance >= distance;
+            distance.Should().BeLessThanOrEqualTo(tolerance);
         }
 
         [Test]
@@ -85,21 +83,10 @@ namespace TagsCloudVisualization.Tests
                     Assert.That(
                         _rectangles[i].IntersectsWith(_rectangles[j]) == false,
                         $"Прямоугольники пересекаются:\n" +
-                        $"{_rectangles[i].ToFormatedString()}\n" +
-                        $"{_rectangles[j].ToFormatedString()}");
+                        $"{_rectangles[i].ToString()}\n" +
+                        $"{_rectangles[j].ToString()}");
                 }
             }
-        }
-
-
-        [TestCase(0.55, ExpectedResult = true)]
-        [Repeat(10)]
-        public bool ShouldPlaceRectanglesTightly(double tight)
-        {
-            var boundingBoxSize = GetBoundingBoxSize();
-            var boundingBoxArea = boundingBoxSize.Width * boundingBoxSize.Height;
-            var filledArea = _rectangles.Sum(r => r.Width * r.Height);
-            return ((double)filledArea / boundingBoxArea) >= tight;
         }
 
         [TearDown]
@@ -126,13 +113,62 @@ namespace TagsCloudVisualization.Tests
             }
         }
 
-        private Size GetBoundingBoxSize()
+        private (int start, int end) GetGridIndexesInterval(
+            int rectangleStartValue,
+            int rectangleCorrespondingSize,
+            double maxRadius,
+            double step)
         {
-            var minX = _rectangles.Min(r => r.Left);
-            var minY = _rectangles.Min(r => r.Top);
-            var maxX = _rectangles.Max(r => r.Right);
-            var maxY = _rectangles.Max(r => r.Bottom);
-            return new Size(maxX - minX, maxY - minY);
+            var start = (int)((rectangleStartValue - _center.X + maxRadius) / step);
+            var end = (int)((rectangleStartValue + rectangleCorrespondingSize - _center.X + maxRadius) / step);
+            return (start, end);
+        }
+
+        private bool[,] GetOccupancyGrid(int gridSize, double maxRadius, double step)
+        {
+            var result = new bool[gridSize, gridSize];
+            foreach (var rect in _rectangles)
+            {
+                var xInterval = GetGridIndexesInterval(rect.X, rect.Width, maxRadius, step);
+                var yInterval = GetGridIndexesInterval(rect.Y, rect.Height, maxRadius, step);
+                for (int x = xInterval.start; x <= xInterval.end; x++)
+                {
+                    for (int y = yInterval.start; y <= yInterval.end; y++)
+                    {
+                        result[x, y] = true;
+                    }
+                }
+            }
+            return result;
+        }
+
+        private double GetOccupancyGridRatio(bool[,] occupancyGrid, double maxRadius, double step)
+        {
+            var totalCellsInsideCircle = 0;
+            var coveredCellsInsideCircle = 0;
+            for (int x = 0; x < occupancyGrid.GetLength(0); x++)
+            {
+                for (int y = 0; y < occupancyGrid.GetLength(0); y++)
+                {
+                    var cellCenterX = x * step - maxRadius + _center.X;
+                    var cellCenterY = y * step - maxRadius + _center.Y;
+
+                    var distance = Math.Sqrt(
+                        Math.Pow(cellCenterX - _center.X, 2) + Math.Pow(cellCenterY - _center.Y, 2));
+
+                    if (distance > maxRadius)
+                    {
+                        continue;
+                    }
+
+                    totalCellsInsideCircle += 1;
+                    if (occupancyGrid[x, y])
+                    {
+                        coveredCellsInsideCircle += 1;
+                    }
+                }
+            }
+            return (double)coveredCellsInsideCircle / totalCellsInsideCircle;
         }
     }
 }

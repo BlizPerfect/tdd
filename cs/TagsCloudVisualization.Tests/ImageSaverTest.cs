@@ -28,7 +28,7 @@ namespace TagsCloudVisualization.Tests
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
-        public void SaveFile_ThrowsArgumentException_WithInvalidFilename(string filename)
+        public void SaveFile_ThrowsArgumentException_WithInvalidFilename(string? filename)
         {
             var dummyImage = new Bitmap(1, 1);
             Assert.Throws<ArgumentException>(() => ImageSaver.SaveFile(dummyImage, filename));

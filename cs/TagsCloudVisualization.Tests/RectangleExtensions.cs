@@ -10,9 +10,13 @@ namespace TagsCloudVisualization.Tests
 {
     internal static class RectangleExtensions
     {
-        public static string ToFormatedString(this Rectangle rectangle)
+        public static double GetMaxDistanceFromPointToRectangleAngles(this Rectangle rectangle, Point point)
         {
-            return $"X={rectangle.X}, Y={rectangle.Y}, Width={rectangle.Width}, Height={rectangle.Height}";
+            var dx = Math.Max(
+                Math.Abs(rectangle.X - point.X), Math.Abs(rectangle.X + rectangle.Width - point.X));
+            var dy = Math.Max(
+                Math.Abs(rectangle.Y - point.Y), Math.Abs(rectangle.Y + rectangle.Height - point.Y));
+            return Math.Sqrt(dx * dx + dy * dy);
         }
     }
 }
