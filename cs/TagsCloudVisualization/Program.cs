@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("TagsCloudVisualization.Tests")]
 namespace TagsCloudVisualization
 {
     internal class Program
