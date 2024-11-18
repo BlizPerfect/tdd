@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace TagsCloudVisualization
 {
     internal class CircularCloudLayouter(Point center) : ICircularCloudLayouter
     {
-        private Circle _arrangementСircle = new Circle(center);
-        private Random _random = new Random();
+        private readonly Circle _arrangementСircle = new Circle(center);
+        private readonly Random _random = new Random();
         private readonly List<Rectangle> _rectangles = new List<Rectangle>();
 
         public Rectangle PutNextRectangle(Size rectangleSize)
